@@ -31,4 +31,11 @@ int free_cache(void);
 /* Indica si ya existe un cache inicializado (1) o no (0). */
 int cache_exists(void);
 
+
+/* Funciones de operaciones LRU */
+void lru_add(char value);
+int lru_search(char value);
+void lru_get(char value);
+void lru_print(void);
+
 #endif 
