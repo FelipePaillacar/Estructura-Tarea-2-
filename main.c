@@ -28,7 +28,7 @@ int main(void) {
             break;
         }
 
-        line[strcspn(line, "\n")] = 0; // eliminar salto de línea
+        line[strcspn(line, "\n")] = 0; // eliminar salto de linea
         char *cmd = skip_spaces(line);
         if (strlen(cmd) == 0)
             continue;
@@ -42,7 +42,7 @@ int main(void) {
         
         // Mostrar ayuda
         if (strcmp(cmd, "lru help") == 0 || strcmp(cmd, "help") == 0) {
-            show_help(); // Asumo que show_help() se actualizó en funciones.c
+            show_help(); // Asumo que show_help() se actualizo en funciones.c
             continue;
         }
         
@@ -76,7 +76,7 @@ int main(void) {
                 fprintf(stderr, ANSI_RED "Uso: lru search <clave_texto>\n" ANSI_RESET);
                 continue;
             }
-            lru_search(arg); // Necesitarás implementar lru_search() con hash
+            lru_search(arg); // Necesitaras implementar lru_search() con hash
             continue;
         }
         
@@ -94,6 +94,12 @@ int main(void) {
         // Imprimir estado del cache
         if (strcmp(cmd, "lru print") == 0) {
             lru_print();
+            continue;
+        }
+
+        //  MOSTRAR ESTADiSTICAS DEL CACHE
+        if (strcmp(cmd, "lru stats") == 0) {
+            lru_stats();
             continue;
         }
 

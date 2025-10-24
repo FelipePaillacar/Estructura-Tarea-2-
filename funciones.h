@@ -29,7 +29,7 @@ typedef struct HashNode
 {
     char *array;            
     Node *list_node;          // Puntero al nodo en la lista doble
-    struct HashNode *next;    // Siguiente en caso de colisión
+    struct HashNode *next;    // Siguiente en caso de colision
 } HashNode;
 
 // El Cache ahora incluye la tabla hash
@@ -55,5 +55,7 @@ void lru_add(char *array);
 int lru_search(char *array);
 void lru_get(char *array);
 void lru_print(void);
+
+void lru_stats(void);
 
 #endif 

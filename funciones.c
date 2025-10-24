@@ -5,7 +5,7 @@
 static Cache *cache = NULL;
 
 /* ----------------------------------------------------
-   Función de Hash 
+   Funcion de Hash 
 ---------------------------------------------------- */
 static unsigned long hash_string(char *str) 
 {
@@ -22,7 +22,7 @@ static unsigned long hash_string(char *str)
    Mostrar ayuda
 ---------------------------------------------------- */
 void show_help(void) {
-    printf(ANSI_CYAN "\n===== MENU DE COMANDOS LRU CACHE (v2.0 Hash) =====\n\n" ANSI_RESET);
+    printf(ANSI_CYAN "\n===== MENU DE COMANDOS LRU CACHE =====\n\n" ANSI_RESET);
     printf(ANSI_YELLOW "Comando" ANSI_RESET "              " ANSI_YELLOW "Descripcion\n" ANSI_RESET);
     printf("-----------------------------------------------\n");
     printf(ANSI_GREEN "lru help" ANSI_RESET "            -> Muestra esta ayuda\n");
@@ -31,6 +31,7 @@ void show_help(void) {
     printf(ANSI_GREEN "lru search <array>" ANSI_RESET "  -> Busca un array y devuelve su posicion\n");
     printf(ANSI_GREEN "lru get <array>" ANSI_RESET "     -> Usa un array y la mueve al frente (MRU)\n");
     printf(ANSI_GREEN "lru print" ANSI_RESET "           -> Muestra el estado actual del cache\n");
+    printf(ANSI_GREEN "lru stats" ANSI_RESET "           -> Muestra estadisticas del cache (hash)\n");
     printf(ANSI_GREEN "lru exit" ANSI_RESET "            -> Libera el cache y termina el programa\n");
 }
 
@@ -300,4 +301,71 @@ void lru_print(void) {
         cur = cur->next;
     }
     printf("\n");
+}
+
+
+/* ----------------------------------------------------
+   Mostrar estadisticas del cache
+---------------------------------------------------- */
+void lru_stats(void) {
+    if (!cache) {
+        printf(ANSI_YELLOW "[No hay cache creado]\n" ANSI_RESET);
+        return;
+    }
+    
+    printf(ANSI_CYAN "=== ESTADiSTICAS DEL CACHE (v2.0 Hash) ===\n" ANSI_RESET);
+    printf("Capacidad total: %d\n", cache->capacity);
+    printf("Elementos actuales: %d\n", cache->count);
+    printf("Espacio disponible: %d\n", cache->capacity - cache->count);
+    
+    // Calcular porcentaje de ocupacion
+    float ocupacion = (cache->count * 100.0) / cache->capacity;
+    printf("Tasa de ocupacion: %.1f%%\n", ocupacion);
+    
+    // Estadisticas de la tabla hash
+    printf("Tamaño tabla hash: %d\n", cache->table_size);
+    
+    // Calcular factor de carga y colisiones
+    int buckets_ocupados = 0;
+    int total_colisiones = 0;
+    int max_colisiones = 0;
+    
+    for (int i = 0; i < cache->table_size; i++) {
+        HashNode *entry = cache->table[i];
+        int colisiones_en_bucket = 0;
+        
+        if (entry) {
+            buckets_ocupados++;
+            entry = entry->next; // Saltar el primer elemento
+            
+            while (entry) {
+                colisiones_en_bucket++;
+                total_colisiones++;
+                entry = entry->next;
+            }
+            
+            if (colisiones_en_bucket > max_colisiones) {
+                max_colisiones = colisiones_en_bucket;
+            }
+        }
+    }
+    
+    printf("Buckets ocupados: %d/%d (%.1f%%)\n", 
+           buckets_ocupados, cache->table_size, 
+           (buckets_ocupados * 100.0) / cache->table_size);
+    printf("Total de colisiones: %d\n", total_colisiones);
+    printf("Maximo colisiones por bucket: %d\n", max_colisiones);
+    
+    // Mostrar MRU y LRU actuales
+    if (cache->head) {
+        printf("Elemento mas reciente (MRU): '%s'\n", cache->head->array);
+    } else {
+        printf("Elemento mas reciente (MRU): [vacio]\n");
+    }
+    
+    if (cache->tail) {
+        printf("Elemento menos reciente (LRU): '%s'\n", cache->tail->array);
+    } else {
+        printf("Elemento menos reciente (LRU): [vacio]\n");
+    }
 }
